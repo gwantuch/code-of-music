@@ -1,0 +1,47 @@
+	#Content {
+		width: 470px;
+		position: absolute;
+	}
+/*	#Content #Sequencer .Checkbox{
+		margin-top: 0px;
+		width: 50px;
+		height: 50px;
+	}
+
+	#Content #Sequencer .Checkbox.Lit{
+		background-color: green;
+	}
+
+	#Content #Sequencer .Checkbox .ui-button-text {
+		height: 100%;
+		width: 100%;
+		padding: 0px;
+		float:center;
+	}
+	#Content #Sequencer .Indicator{
+		position: relative;
+		float: left;
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		margin: 1.4px;
+		background-color: green;
+		opacity: 0;
+/*		transition: opacity 0.1s;
+*/	}*/
+	#Content #Sequencer .Indicator.Lit{
+		opacity: .8;
+	}
+	.Slider {
+		margin-top: 20px;
+		width: 60%;
+		margin-left: 20%;
+	}
+	#Content #StartButton {
+		position: relative;
+		width: 60%;
+		margin-left: 20%;
+	}
+	#Content #StartButton .Checkbox{
+		width: 100%;
+	}
