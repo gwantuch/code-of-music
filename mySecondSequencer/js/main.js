@@ -10,6 +10,7 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 		var camera, scene, renderer; 
 		var width = window.innerWidth;
 		var height = window.innerHeight;
+		var flag = false;
 
 		scene = new THREE.Scene();
 
@@ -31,7 +32,8 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
   		function makeCubeSteps () {
 			for (var step = 0; step < numSteps; step++){
 				var cubeGeometry = new THREE.CubeGeometry(10,10,10);
-				var cubeMaterial = new THREE.MeshBasicMaterial( { wireframe: true, color: 0x777777 } );
+				var cubeMaterial = new THREE.MeshBasicMaterial( { color: new THREE.Color("rgb(255, 20, 20)") } );
+				cubeMaterial.transparent = true;
 				cubeStep.push(new THREE.Mesh(cubeGeometry, cubeMaterial));
 				cubeStep[step].position.x = 40 + step * -10;
 				scene.add(cubeStep[step]);
@@ -80,11 +82,11 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 			for(var i = 0; i < cubeStep.length; i++){
 				if(i == stepNum){
 					cubeStep[i].position.y = 20;
-					cubeStep[i].material.color.setHex(0x00ff00);
+					// cubeStep[i].material.color.setHex(0x00ff00);
 				}
 				else{
 					cubeStep[i].position.y = 0;
-					cubeStep[i].material.color.setHex(0x777777);
+					// cubeStep[i].material.color.setHex(0x777777);
 				}
 			}
 			//get the current column
@@ -92,6 +94,7 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 			// 	var box = checkboxes[stepNum];
 			// 	if (box.isChecked()){
 			synth.triggerAttackRelease(steps[stepNum], "16n");
+			console.log(Tone.Transport.toSeconds() % Tone.Transport.toSeconds("1:4:1"));
 			// 	}
 			// }
 		}, "16n");
@@ -102,8 +105,11 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 		var startButton = $("#StartButton");
 		var startCheckbox = new GUI.Checkbox(startButton, function(on){
 			if (on){
+				flag = true;
 				Tone.Transport.start();
+				now = Tone.Transport.toSeconds();
 			} else {
+				flag = false;
 				Tone.Transport.stop();
 			}
 		}, "start", "stop");
@@ -131,7 +137,7 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 			requestAnimationFrame( animate );
 			renderer.render(scene,camera);
 			// console.log('rendering');
-			console.log(Tone.Transport.toSeconds());
+			// if(flag) console.log( );
 		}
 		
 		window.addEventListener( 'resize', onWindowResize, false );

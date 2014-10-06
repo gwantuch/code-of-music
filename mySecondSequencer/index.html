@@ -2,29 +2,13 @@
 <html>
 	<head>
 		<title>My Second Sequencer</title>
-		<!-- data-main attribute tells require.js to load
-		     scripts/main.js after require.js loads. -->
-		<script type="text/javascript" src="js/libs/jquery.min.js"></script>
-		<script type="text/javascript" src="js/libs/jquery-ui.js"></script>
-		<script data-main="js/main" src="js/require.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="./style/widgets.css">
-		<link rel="stylesheet" type="text/css" href="./style/jquery-ui.css">	
-		<link rel="stylesheet" type="text/css" href="./style/styles.css">
+		<script type="text/javascript" src="../libs/Tone.js/build/Tone.js"></script>
+		<script type="text/javascript" src="js/libs/music.js"></script>
+		<script type="text/javascript" src="js/libs/p5.js"></script>
+		<script type="text/javascript" src="js/block.js"></script>
+		<script type="text/javascript" src="js/sketch.js"></script>
+		<link rel="stylesheet" type="text/css" href="style/styles.css">
 	</head>
 	<body>
-		<div id="Container">
-			<div id="Content">
-				<div id="StartButton"></div>
-<!-- 				<div id="Sequencer"></div>
-				<div id="Explanation">
-					Simple Step Sequencer
-					<br>
-					<br>
-					Made with <a href="http://tonenotone.github.io/Tone.js/doc/index.html" target="_blank">Tone.js</a>, adapted from 
-					<a href="http://tonenotone.github.io/Tone.js/examples/stepSequencer.html" target="_blank"> this example</a>. 
-					Uses the FMSynth instrument, along with a simple music theory library that produces 8 steps randomly in a given scale. 
-				</div> -->
-			</div>
-		</div>
     </body>
 </html>
