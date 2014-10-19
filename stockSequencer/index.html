@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Stock Sequencer</title>
+		<script type="text/javascript" src="node_modules/tone/build/Tone.min.js"></script>
+		<script type="text/javascript" src="node_modules/tone/build/Tone.Preset.js"></script>
+		<link rel="stylesheet" type="text/css" href="node_modules/chartist/libdist/chartist.min.css">
+		<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">				
+		<style type="text/css">
+			html, body {
+					height: 100%;
+				}
+
+				body {
+					padding: 50px 0 0 0;
+				}
+
+				.navbar-toggle {
+					float: left;
+					margin-left: 15px;
+				}
+
+				@media (min-width: 0) {
+					.navbar-toggle {
+						display: block; /* force showing the toggle */
+					}
+				}
+
+				@media (min-width: 992px) {
+					body {
+						padding: 0;
+					}
+					.navbar {
+						right: auto;
+						background: none;
+						border: none;
+					}
+				}
+		</style>
+	</head>
+
+	<body>
+		<nav id="myNavmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
+			<a class="navmenu-brand">Stock Sequencer</a>
+			<div class="input-group" style="padding: 15px;">
+				<input id="Stock1" type="text" class="form-control" placeholder="Enter a ticker, e.g. 'AAPL'" style="margin-bottom: 10px;">
+				<button id="addStock" class="btn btn-default">Submit</button>
+			</div>
+			<ul id="stocklist" class="list-group" style="margin: 15px;">
+			</ul>
+		</nav>
+		<div class="navbar navbar-default navbar-fixed-top">
+			<button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#myNavmenu" data-canvas="body">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+		</div>
+		<div class="container">
+			<div class="ct-chart ct-major-sixth"></div>	
+		</div>
+
+		<script type="text/javascript" src="index.js"></script>
+		<script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+    </body>
+</html>

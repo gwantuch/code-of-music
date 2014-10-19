@@ -1,0 +1,26 @@
+{
+  "name": "stockSequencer",
+  "version": "0.0.1",
+  "description": "gathers real time financial information about a stock, turns data into melody sequence",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jffng/code-of-music/stockSequencer"
+  },
+  "keywords": [
+    "tonejs",
+    "sequencer"
+  ],
+  "author": "Jeff Ong",
+  "license": "MIT",
+  "dependencies": {
+    "tone": "~0.2.0",
+    "jquery": "~2.1.1",
+    "underscore": "~1.7.0",
+    "chartist": "~0.2.2",
+    "bootstrap": "~3.2.0"
+  }
+}
