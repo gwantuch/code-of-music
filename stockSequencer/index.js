@@ -32,51 +32,34 @@ function initTone (stocks, synths) {
 			synths[s].triggerAttackRelease(stocks[s].steps[stepNum], '16n');
 		}
 
+		points = document.getElementsByClassName("ct-point");
+
+		if(points){
+			for (var i = 0; i < points.length; i++){
+				for(var s = 0; s < stocks.length; s++){
+					if(points[i].getAttribute('ct:value') == (Math.round(stocks[s].prices[stepNum] * 1000) / 1000)){
+						points[i].style['stroke-width'] = '20px';
+					}
+					else{
+						points[i].style['stroke-width'] = '';
+					}
+				}
+			}
+		}
+
 	}, "8n");
 
 	Tone.Transport.start();
 }
 
 function updateGraph (updatedPrices, dates) {
+
 	var graphData = {
 		labels: dates,
 		series: updatedPrices 
 	};
 
 	Chartist.Line('.ct-chart', graphData);
-
-	var easeOutQuad = function (x, t, b, c, d) {
-		return -c * (t /= d) * (t - 2) + b;
-	};
-
-	var $chart = $('.ct-chart');
-	// var $toolTip = $chart
-	// 	.append('<div class="tooltip"></div>')
-	// 	.find('.tooltip')
-	// 	.hide();
-
-	// $chart.on('mouseenter', '.ct-point', function() {
-	// 	var $point = $(this),
-	// 	value = $point.attr('ct:value'),
-	// 	seriesName = $point.parent().attr('ct:series-name');
-
-	// 	$point.animate({'stroke-width': '50px'}, 300, easeOutQuad);
-	// 	$toolTip.html(seriesName + '<br>' + value).show();
-	// });
-
-	// $chart.on('mouseleave', '.ct-point', function() {
-	// 	var $point = $(this);
-
-	// 	$point.animate({'stroke-width': '20px'}, 300, easeOutQuad);
-	// 	$toolTip.hide();
-	// });
-
-	// $chart.on('mousemove', function(event) {
-	// 	$toolTip.css({
-	// 	left: event.offsetX - $toolTip.width() / 2 - 10,
-	// 	top: event.offsetY - $toolTip.height() - 40
-	// 	});
-	// });	
 }
 
 var Stock = function(tickerSymbol) {
@@ -86,6 +69,13 @@ var Stock = function(tickerSymbol) {
 
 Stock.prototype.init = function(stocks, synths, prices) {
 	var self = this;
+
+	function listPoints (points) {
+		// i'm the callback
+		for(i = 0; i < 8; i++){
+			console.log(points[i].getAttribute('ct:value'));
+		}
+	}
 
 	var parameters = {
 		"Normalized": true,
@@ -107,7 +97,7 @@ Stock.prototype.init = function(stocks, synths, prices) {
 		type: 'GET',
 		dataType: 'jsonp',
 	})
-	.done(function(data) {
+	.done(function(data,pointsList) {
 		// console.log("success");
 
 		var dates = data.Dates;
@@ -116,8 +106,6 @@ Stock.prototype.init = function(stocks, synths, prices) {
 		var mPrices = data.Elements[0].DataSeries.close.values;
 		mPrices = mPrices.slice(Math.max(mPrices.length - stepCount));
 
-		// console.log(mPrices);
-
 		self.init_Steps(mPrices, stepCount);
 		self.init_Synth();
 
@@ -125,13 +113,15 @@ Stock.prototype.init = function(stocks, synths, prices) {
 		synths.push(self.synth);
 		prices.push(self.prices);
 
-		// console.log(prices);
 		updateGraph(prices, dates);
+		
 		$('#stocklist').append('<li class="list-group-item">'+self.ticker+'</li>');
 
 		if(stocks.length === 1){
-			initTone(stocks, synths);			
+			initTone(stocks, synths);					
 		}
+
+		// listPoints(points);
 	})
 	.fail(function() {
 		console.log("error");
@@ -151,8 +141,6 @@ Stock.prototype.init_Steps = function(prices, numSteps) {
 		this.notes[p] = prices[p] + 20;
 		this.notes[p] = Math.min(Math.max(this.notes[p],0),40);
 	}
-
-	console.log(this.notes);
 
 	var min = _.min(this.notes);
 	var max = _.max(this.notes);
