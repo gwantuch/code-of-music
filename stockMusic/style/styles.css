@@ -2,6 +2,12 @@ html * {
     box-sizing: border-box;
 }
 
+body {
+/*    background-color: rgba(80,80,80,.8);
+*/
+    overflow: hidden;
+}
+
 #chart {
     width: 1280px;
     position: relative;
@@ -9,15 +15,18 @@ html * {
 
 .chart .axis text {
     font: 10px sans-serif;
+    font-style: thin;
+/*    stroke: lightgrey;
+*/    shape-rendering: crispEdges;    
 }
 
 .chart .axis .domain,
 .chart .axis .tick line {
     fill: none;
-    stroke: black;
+    stroke: darkgrey;
     shape-rendering: crispEdges;
 }
-
+    
 .chart .gridlines {
     stroke: lightgrey;
     shape-rendering: crispEdges;
@@ -52,7 +61,7 @@ html * {
 .chart .comparison-series .line {
     fill: none;
     stroke: steelblue;
-    stroke-width: 1.5px;
+    stroke-width: 2px;
     vector-effect: non-scaling-stroke;
 }
 
