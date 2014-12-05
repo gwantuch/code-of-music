@@ -38,7 +38,7 @@ var Stock = function(tickerSymbol) {
 	this.loading = true;
 }
 
-Stock.prototype.init = function() {
+Stock.prototype.init = function(stock_array, chart_data, step_array_ref) {
 	var self = this;
 
 	var parameters = {
@@ -64,7 +64,7 @@ Stock.prototype.init = function() {
 	.done(function(d) {
 		// console.log("success");
 
-		console.log(JSON.stringify(d));
+		// console.log(JSON.stringify(d));
 
 		var dates = d.Dates;
 		dates = dates.slice(Math.max(dates.length - 90));
@@ -72,30 +72,37 @@ Stock.prototype.init = function() {
 		var prices = d.Elements[0].DataSeries.close.values;
 		prices = prices.slice(Math.max(prices.length - 90));
 
-		var stockData = [];
+		var stock_data = [];
 
-		var stockNames = [ self.ticker ];
+		var stock_name = self.ticker;
 
 		for (var i = 0; i < dates.length; i++){
 			var d = dates[i].replace('T','-');
 				d = d.split('-');
 
-			var datePrice = {
+			var date_price = {
 				date: new Date( parseInt(d[0]), parseInt(d[1]-1), parseInt(d[2]) ),
 				close: prices[i]
 			};
 
-			stockData.push(datePrice);
+			stock_data.push(date_price);
 		}
 
-		var data = stockNames.map(	function(name){
-			return {
-				name: name,
-				data: stockData
-			}
-		});
+		var stock_object = {
+				name: stock_name,
+				data: stock_data
+			};
 
-		// comparisonChart("Geometric", data);
+		self.data = stock_object;
+
+		chart_data.push(stock_object);
+
+		stock_array.push(self);
+
+		comparisonChart("Geometric", chart_data, Tone.Transport, stock_array, step_array_ref);
+
+		self.init_Steps(prices);
+		self.init_Synth();
 
 	})
 	.fail(function() {
@@ -106,7 +113,7 @@ Stock.prototype.init = function() {
 	});
 };
 
-Stock.prototype.init_Steps = function(prices, deltas) {
+Stock.prototype.init_Steps = function(prices) {
 	var referenceFreq = 49;
 
 	var min = _.min(prices);
@@ -114,7 +121,7 @@ Stock.prototype.init_Steps = function(prices, deltas) {
 
 	this.steps = [];
 	this.music = new Music(referenceFreq);
-	this.music 
+	// this.music 
 	
 	for(var note = 0; note < prices.length; note++){
 		this.steps[note] = this.music.snapToNote( ( prices[note] ), min, max );
@@ -131,12 +138,6 @@ Stock.prototype.init_Synth = function() {
 	this.synth.oscillator.setType('sine');
 	this.synth.setVolume(-20);
 	this.synth.toMaster();
-
-	// this.synth = new Tone.MonoSynth();
-	// this.synth.setPreset(presets[Math.round(Math.random()*5)]);
-	// this.synth.oscillator.setType();
-	// this.synth.setVolume(-20);
-	// this.synth.toMaster();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -145,64 +146,81 @@ Stock.prototype.init_Synth = function() {
 //																			  //
 ////////////////////////////////////////////////////////////////////////////////
 
-ge = clean(ge);
-aapl = clean(aapl);
-nflx = clean(nflx);
 
-var stocknames = [ 'ge', 'aapl', 'nflx' ];
-
-var stockdata = [];
-
-stockdata.push(ge, aapl, nflx);
-
-var data = [];
 var stocks = [];
+var d3_data = [];
 
-for (var i = 0; i < stocknames.length; i++){
-	var stockobject = {
-		name: stocknames[i],
-		data: stockdata[i]
-	}
-
-	data.push(stockobject);
-
-	var prices = [];
-	var percentage_change = [];
-
-	for(var s = 0; s < stockdata[i].length; s++){
-		prices.push(stockdata[i][s].close);
-
-		percentage_change.push(stockdata[i][s] / stockdata[i][0]);
-	}
-
-	var stock = new Stock(stocknames[i]);
-
-	stock.data = stockobject;
-
-	stock.init_Steps(prices, percentage_change);
-	stock.init_Synth();
-	
-	stocks.push(stock);
-}
-
-var stepNum = 0;
-var stepArray = [0,1,2,3,4,5,6,7];
-
+// initialize the step_array and transport to pass to D3
+var step_num = 0;
+var step_array = [0,1,2,3,4,5,6,7];
 Tone.Transport.loop = true;
 Tone.Transport.setBpm( 144 );
 
-console.log(data);
+$(document).ready(function () {
+	$('#addStock').on('click', function(event) {
+		var mStock = new Stock($('#Stock1').val());
+		mStock.init(stocks, d3_data, step_array);
 
-var chart = comparisonChart("Geometric", data, Tone.Transport, stocks, stepArray);
+		$('#Stock1').val('');
+	});
+});
 
 Tone.Transport.setInterval(function(time){
-	stepNum++;
-	stepNum = stepNum % 8;
+	step_num++;
+	step_num = step_num % 8;
 	
-	for(var s = 0; s < stocks.length; s++){
-		stocks[s].synth.triggerAttackRelease(stocks[s].steps[stepArray[stepNum]], '8n');
+	if(stocks){
+		for(var s = 0; s < stocks.length; s++){
+			stocks[s].synth.triggerAttackRelease(stocks[s].steps[step_array[step_num]], '8n');
+		}
 	}
 
 }, "8n");
 
 Tone.Transport.start();
+
+////////////////////////////////////////////////////////////////////////////////
+//																			  //
+//							  TEST DATA 									  //
+//																			  //
+////////////////////////////////////////////////////////////////////////////////
+
+// ge = clean(ge);
+// aapl = clean(aapl);
+// nflx = clean(nflx);
+
+// var stocknames = [ 'ge', 'aapl', 'nflx' ];
+
+// var stockdata = [];
+
+// stockdata.push(ge, aapl, nflx);
+
+// var data = [];
+// var stocks = [];
+
+// for (var i = 0; i < stocknames.length; i++){
+// 	var stockobject = {
+// 		name: stocknames[i],
+// 		data: stockdata[i]
+// 	}
+
+// 	data.push(stockobject);
+
+// 	var prices = [];
+// 	var percentage_change = [];
+
+// 	for(var s = 0; s < stockdata[i].length; s++){
+// 		prices.push(stockdata[i][s].close);
+
+// 		// percentage_change.push(stockdata[i][s] / stockdata[i][0]);
+// 	}
+
+// 	var stock = new Stock(stocknames[i]);
+
+// 	stock.data = stockobject;
+
+// 	stock.init_Steps(prices);
+// 	stock.init_Synth();
+	
+// 	stocks.push(stock);
+// }
