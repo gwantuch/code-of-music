@@ -1,0 +1,109 @@
+html * {
+    box-sizing: border-box;
+}
+
+body {
+/*    background-color: rgba(200,200,200,.8);
+*/
+    font-family: monospace !important;
+    overflow: hidden;
+    height: 100%;
+    padding: 50px 0 0 0;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.navbar-toggle {
+    float: left;
+    margin-left: 15px;
+}
+@media (min-width: 0) {
+    .navbar-toggle {
+        display: block; /* force showing the toggle */
+    }
+}
+
+@media (min-width: 992px) {
+    body {
+        padding: 0;
+    }
+    .navbar {
+        right: auto;
+        background: none;
+        border: none;
+    }
+}
+
+#chart {
+    width: 1280px;
+    position: relative;
+}
+
+.chart .axis text {
+    font: 10px sans-serif;
+    font-style: thin;
+/*    stroke: lightgrey;
+*/    shape-rendering: crispEdges;    
+}
+
+.chart .axis .domain,
+.chart .axis .tick line {
+    fill: none;
+    stroke: darkgrey;
+    shape-rendering: crispEdges;
+}
+    
+.chart .gridlines {
+    stroke: lightgrey;
+    shape-rendering: crispEdges;
+    stroke-width: 1;
+}
+
+.chart .ohlc-series path {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 1.5;
+}
+
+.chart .ohlc-series .up-days {
+    stroke: green;
+}
+
+.chart .ohlc-series .down-days {
+    stroke: red;
+}
+
+.chart .ohlc-series .bar.up-day {
+    stroke: green;
+}
+
+.chart .ohlc-series .bar.down-day {
+    stroke: red;
+}
+
+.chart .candlestick-series .bar path {
+    stroke: black;
+}
+
+.chart .comparison-series .line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
+    vector-effect: non-scaling-stroke;
+}
+
+.chart .bar.up-day rect {
+    fill: green;
+}
+
+.chart .bar.down-day rect {
+    fill: red;
+}
+
+.chart .zoom-pane {
+    fill: none;
+    pointer-events: all;
+    cursor: -webkit-grab;
+    cursor: -moz-grab;
+}
