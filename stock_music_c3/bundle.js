@@ -64,52 +64,55 @@ Stock.prototype.init = function(stock_array) {
 			self.dates.push(the_date);
 			self.deltas.push(percentage_change);
 
-			// var date_price = {
-			// 	date: new Date( parseInt(d[0]), parseInt(d[1]-1), parseInt(d[2]) ),
-			// 	close: prices[i]
-			// };
-
-			// stock_data.push(date_price);
 		}
 
 		if(chart){
-			// chart.regions.add([{start: '2014-08-14', end: '2014-10-10'}]);
 			chart.load({
 				columns: [
 					self.deltas
 				]
 			});
 		} else{
-			region = [{
+			var region = [{
 				start: self.dates[1],
 				end: self.dates[90]
-				// index_start: 1,
-				// index_end: 90
-			}]
+			}];
 			
 			chart = new Chart(self, region);
-			
+			chart.start_index = 1;
+			chart.end_index = 90;
+
 			window.addEventListener('resize', function() {
 				chart.resize({height: window.innerHeight, width:window.innerWidth});
 			}, true);
 
-			// chart.regions.add([{ start: region.start, end: region.end }]);
+			Tone.Transport.start();
+
 		}
-
-		// var stock_object = {
-		// 		name: stock_name,
-		// 		data: stock_data
-		// 	};
-
-		// self.data = stock_object;
 
 		stock_array.push(self);
 		self.init_Steps(prices);
-		self.init_Synth();
-		self.play = true;
+		self.init_Synth('Smooth');
+		self.play = false;
 
 		$('#Stock1').val('');
-		$('#stocklist').append('<button id='+self.ticker+' type="button" class="btn btn-default active">'+ self.ticker + '</button>');
+		$('#stocklist').append('<button id='+self.ticker+' type="button" class="btn btn-default">'+ self.ticker + '</button>');
+		var dropdown = '<div class="btn-group" role="group"><button id='+self.ticker+'_dropdown type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Synth<span class="caret"></span></button>'+
+		'<ul id='+self.ticker+'_menu class="dropdown-menu" role="menu">'+
+		'<li><a href="#">Smooth</a></li>'+
+		'<li><a href="#">Distorted</a></li>'+
+		'<li><a href="#">Jazzy</a></li></div><br><br>';
+		$('#stocklist').append(dropdown);
+
+		$("#"+self.ticker+"_menu").on('click', 'li a', function(){
+			var preset = $(this).text();
+
+			$("#"+self.ticker+"_dropdown:first-child").text(preset);
+			$("#"+self.ticker+"_dropdown:first-child").val(preset);
+
+			self.init_Synth(preset);
+		});
+
 		var button = document.getElementById(self.ticker);
 			button.onclick = function(e){
 				e.preventDefault();
@@ -157,21 +160,40 @@ Stock.prototype.init_Steps = function(prices) {
 	// console.log(this.steps);
 }
 
-Stock.prototype.init_Synth = function() {
-	var presets = [ "Trumpet", "Koto", "Barky", "Pianoetta", "LaserStep"];
+Stock.prototype.init_Synth = function(preset) {
+	switch(preset) {
+		case 'Smooth':
+			this.synth = new Tone.MonoSynth();
+			this.synth.setPreset("Koto");
+			this.synth.oscillator.setType('sine');
+			this.synth.setVolume(-10);
+			break;
+		case 'Jazzy':
+			this.synth = new Tone.MonoSynth();
+			this.synth.setPreset("Pianoetta");			
+			this.synth.setVolume(-15);
+			break;
+		case 'Distorted':
+			this.synth = new Tone.FMSynth();
+			this.synth.setPreset("DistGit");			
+			this.synth.setVolume(-15);
+			break;
+		default:
+			this.synth = new Tone.MonoSynth();
+			this.synth.setPreset("Koto");
+			this.synth.oscillator.setType('sine');
+			this.synth.setVolume(-10);
+			break;			
+	}
 
-	this.synth = new Tone.FMSynth();
-	this.synth.setPreset("DistGit");
-	// this.synth.carrier.oscillator.setType('pulse');
-	this.synth.setVolume(-20);
 	this.synth.toMaster();
 }
 
 var Rhythm = function(){
-	this.synth = new Tone.FMSynth();
-	this.synth.setPreset("Koto");
+	this.synth = new Tone.MonoSynth();
+	this.synth.setPreset("Kick");
 	// this.synth.carrier.oscillator.setType('pulse');
-	this.synth.setVolume(-30);
+	this.synth.setVolume(-10);
 	this.synth.toMaster();
 }
 
@@ -190,8 +212,6 @@ var natural_minor = [0, 0, -1, 0, 0, -1, -1, 0];
 // initialize the step_array and transport to pass to D3
 var step_num = 0;
 var rhythm_step = 0;
-var region;
-var step_array = [0,1,2,3,4,5,6,7];
 Tone.Transport.loop = true;
 Tone.Transport.setBpm( 144 );
 
@@ -211,26 +231,48 @@ Tone.Transport.setInterval(function(time){
 	rhythm_step++;
 	rhythm_step = rhythm_step % 16;
 	
-	if(stocks && rhythm_step % 2){
-		step_num++;
-		for(var s = 0; s < stocks.length; s++){
-			step_num = step_num % stocks[s].steps_major.length;
+	// var val = Math.random();
 
-			if(stocks[s].play){
-				// if(stocks[s].prices[step_array[step_num]] < stocks[s].prices[[step_array[0]]]){
-					// stocks[s].synth.triggerAttackRelease(stocks[s].steps_minor[step_array[step_num]], "8n", time);
-				// } else {
-					stocks[s].synth.triggerAttackRelease(stocks[s].steps_major[step_num], "8n", time);				
-				// }				
+	// switch(true){
+	// 	case (val<.25):
+	// 		rhythm.synth.triggerAttackRelease("D2","16n", time);
+	// 		break;
+	// 	case (val<.6 && val > .25):
+	// 		rhythm.synth.triggerAttackRelease("C2","16n", time);
+	// 		break;
+	// 	case (val<.8 && val > .25):	
+	// 		rhythm.synth.triggerAttackRelease("G2","16n", time);
+	// 		break;
+	// 	default:
+	// 	break;		
+	// }
+
+	if(stocks && rhythm_step % 2){
+		var start = chart.start_index;
+		var end   = chart.end_index;
+		var diff  = end - start;
+
+		step_num++;
+		step_num = step_num % (diff + 1);
+		chart.xgrids([{
+			value: stocks[0].dates[ start + step_num + 1],
+			text: 'Playhead'
+		}]);	
+		for(var s = 0; s < stocks.length; s++){
+	
+			if(stocks[s].play){			
+				if(stocks[s].prices[start + step_num] < stocks[s].prices[0]){
+					stocks[s].synth.triggerAttackRelease(stocks[s].steps_minor[start + step_num], "16n", time);
+				} else {
+					stocks[s].synth.triggerAttackRelease(stocks[s].steps_major[start + step_num], "16n", time);			
+				}				
 			}
 		}
-	}
 
-	rhythm.synth.triggerAttackRelease("G2","16n", time);
+	}
 
 }, "8n");
 
-// Tone.Transport.start();
 
 
 },{"c3":2,"chart":3,"d3":4,"jquery":5,"music":6,"underscore":7}],2:[function(require,module,exports){
@@ -7018,6 +7060,7 @@ var margin = {top: 100, right: 100, bottom: 50, left: 100},
 
 var Chart = function (stock, region_object) {
 	var date_points = [];
+	var indices = [];
 
 	return c3.generate({
 		bindto: '#chart',
@@ -7027,49 +7070,17 @@ var Chart = function (stock, region_object) {
 			columns: [ stock.dates, stock.deltas ],
 			onclick: function(d, element){
 				date_points.push(d.x);
+				console.log(d.index);
+				indices.push(d.index);
 
 				if(date_points.length % 2 == 0){
 					this.regions()[0].start = 	date_points[date_points.length - 2];
 					this.regions()[0].end = 	date_points[date_points.length - 1];
 
-					this.xgrids([{
-						value: date_points[date_points.length - 2],
-						text: 'Sequence'
-					}]);
-
-					// console.log(this.regions.remove([{start: date_points[date_points.length - 4], end: date_points[date_points.length - 3]}]));
-					// this.regions.remove([{start: date_points[date_points.length - 4], end: date_points[date_points.length - 3]}]);
-					// console.log(this.regions([{start: date_points[date_points.length - 2], end: date_points[date_points.length-1]}]));
-					// this.regions([{start: date_points[date_points.length - 2], end: date_points[date_points.length-1]}]);				
-				
-					// console.log(this.regions.add([{start: date_points[date_points.length - 2], end: date_points[date_points.length-1]}]));
-					// this.regions.add([{ start: date_points[date_points.length - 2], end: date_points[date_points.length - 1] }])
-
-					// region_object = [{ start: date_points[date_points.length - 2], end: date_points[date_points.length - 1] }];
-					// this.regions.remove();
+					this.start_index =	Math.min(indices[indices.length - 2],indices[indices.length - 1]);
+					this.end_index 	 =	Math.max(indices[indices.length - 2],indices[indices.length - 1]);
+					console.log(this.start_index);
 				} 
-
-				// console.log(regions);
-
-				// console.log(this);
-				// console.log(d);
-				// if(d.index < regions.index_start) {
-				// 	this.regions.remove();
-				// 	regions.index_end = regions.index_start;					
-				// 	regions.index_start = d.index;
-				// 	regions.end_date = regions.start_date;
-				// 	regions.start_date = d.x;
-				// } 
-				// else if (d.index > regions.index_start){
-				// 	this.regions.remove();
-				// 	regions.index_end = d.index;
-				// 	regions.end_date = d.x;
-				// } 
-				// else if (d.index > ) regions.
-				// regions.start_date = d.x;
-				// regions.end_date = ;
-				// console.log('element: '+element);
-				// this.regions.add([{ start: regions.start_date, end: regions.end_date }]);
 			}
 		},
 
@@ -7077,7 +7088,8 @@ var Chart = function (stock, region_object) {
 			x: {
 				type: 'timeseries',
 				tick: {
-					format: '%Y-%m-%d'
+					format: '%Y-%m-%d',
+					fit: true
 				}
 			}
 		},
@@ -7094,7 +7106,15 @@ var Chart = function (stock, region_object) {
 			right: margin.right
 		},
 
-		regions: region_object
+		regions: region_object,
+
+		tooltip: {
+			show: false
+		},
+
+		// zoom: {
+		// 	enabled: true
+		// }
 
 		// subchart: {
 		// 	show: true

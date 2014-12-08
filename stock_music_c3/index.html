@@ -13,20 +13,24 @@
 </head>
 <body>
 	<nav id="myNavmenu" class="navmenu navmenu-default navmenu-fixed-left offcanvas" role="navigation">
-		<a class="navmenu-brand">Stock Sequencer</a>
+		<a class="navmenu-brand">Stock Music</a>
 		<div class="input-group" style="padding: 15px;">
 			<input id="Stock1" type="text" class="form-control" placeholder="Enter a ticker, e.g. 'AAPL'" style="margin-bottom: 10px;">
 			<button id="addStock" class="btn btn-default">Submit</button>
 		</div>
-		<div id="stocklist" class="btn-group-vertical" role="group" aria-label="..." style="padding: 15px">
+		<div id="stocklist" class="btn-group" role="group" aria-label="..." style="padding: 15px">
 		</div>
 	</nav>
-	<div class="navbar navbar-default navbar-fixed-top">
+	<div class="navbar navbar-default navbar-fixed-top" style="background: rgba(20,20,20,.1); width: 100%; color: #333; display: inline-block; vertical-align: middle; float: none;">
+
 		<button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target="#myNavmenu" data-canvas="body">
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
+		<div class="navbar-header" style="line-height: 50px; display: inline-block; vertical-align: middle; float: none;">
+			Stock Music			
+		</div>
 	</div>
 	<div id="chart"></div>
 	<script type="text/javascript" src="bundle.js" charset="utf-8"></script>

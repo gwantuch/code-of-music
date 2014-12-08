@@ -5,7 +5,7 @@ html * {
 body {
 /*    background-color: rgba(200,200,200,.8);
 */
-    font-family: monospace !important;
+    font-family: Georgia !important;
     overflow: hidden;
     height: 100%;
     padding: 50px 0 0 0;
