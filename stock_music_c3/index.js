@@ -50,8 +50,8 @@ Stock.prototype.init = function(stock_array) {
 
 		var stock_name = self.ticker;
 
-		self.dates = [ 'x' ]
-		self.deltas = [stock_name]
+		self.dates = [ 'x' ];
+		self.deltas = [stock_name];
 
 		for (var i = 0; i < dates.length; i++){
 			var d = dates[i].replace('T','-');
@@ -69,6 +69,7 @@ Stock.prototype.init = function(stock_array) {
 			chart.load({
 				columns: [
 					self.deltas
+					// prices
 				]
 			});
 		} else{
@@ -92,7 +93,7 @@ Stock.prototype.init = function(stock_array) {
 		stock_array.push(self);
 		self.init_Steps(prices);
 		self.init_Synth('Smooth');
-		self.play = false;
+		self.play = true;
 
 		$('#Stock1').val('');
 		$('#stocklist').append('<button id='+self.ticker+' type="button" class="btn btn-default">'+ self.ticker + '</button>');
@@ -212,7 +213,7 @@ var natural_minor = [0, 0, -1, 0, 0, -1, -1, 0];
 var step_num = 0;
 var rhythm_step = 0;
 Tone.Transport.loop = true;
-Tone.Transport.setBpm( 144 );
+Tone.Transport.setBpm( 180 );
 
 $(document).ready(function () {
 	var aapl = new Stock('aapl');
@@ -229,42 +230,30 @@ var rhythm = new Rhythm();
 Tone.Transport.setInterval(function(time){
 	rhythm_step++;
 	rhythm_step = rhythm_step % 16;
-	
-	// var val = Math.random();
-
-	// switch(true){
-	// 	case (val<.25):
-	// 		rhythm.synth.triggerAttackRelease("D2","16n", time);
-	// 		break;
-	// 	case (val<.6 && val > .25):
-	// 		rhythm.synth.triggerAttackRelease("C2","16n", time);
-	// 		break;
-	// 	case (val<.8 && val > .25):	
-	// 		rhythm.synth.triggerAttackRelease("G2","16n", time);
-	// 		break;
-	// 	default:
-	// 	break;		
-	// }
 
 	if(stocks && rhythm_step % 2){
 		var start = chart.start_index;
 		var end   = chart.end_index;
 		var diff  = end - start;
+		console.log(start);
+		console.log(end);
+
+		// console.log(diff);
 
 		step_num++;
-		step_num = step_num % (diff + 1);
-		chart.xgrids([{
-			value: stocks[0].dates[ start + step_num + 1],
-			text: 'Playhead'
-		}]);	
+		step_num = step_num % diff;
+		// chart.xgrids([{
+		// 	value: stocks[0].dates[ start + step_num],
+		// 	text: 'Playhead'
+		// }]);	
 		for(var s = 0; s < stocks.length; s++){
 	
 			if(stocks[s].play){			
-				if(stocks[s].prices[start + step_num] < stocks[s].prices[0]){
-					stocks[s].synth.triggerAttackRelease(stocks[s].steps_minor[start + step_num], "16n", time);
-				} else {
-					stocks[s].synth.triggerAttackRelease(stocks[s].steps_major[start + step_num], "16n", time);			
-				}				
+				// if(stocks[s].prices[start + step_num] < stocks[s].prices[0]){
+				// 	stocks[s].synth.triggerAttackRelease(stocks[s].steps_minor[start + step_num], "16n", time);
+				// } else {
+					// stocks[s].synth.triggerAttackRelease(stocks[s].steps_major[start + step_num], "16n", time);			
+				// }				
 			}
 		}
 
