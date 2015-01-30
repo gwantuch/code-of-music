@@ -3,8 +3,6 @@ var React = require('react');
 var App = require('./App.js');
 // React.render(<App/>, document.body);
 
-'use strict';
-
 var $ = require('jquery');
 var d3 = require('d3');
 var c3 = require('c3');
@@ -91,7 +89,7 @@ Stock.prototype.init = function(stock_array) {
 				chart.resize({height: window.innerHeight, width:window.innerWidth});
 			}, true);
 
-			Tone.Transport.start();
+			// Tone.Transport.start();
 
 		}
 

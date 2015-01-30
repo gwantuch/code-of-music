@@ -11,7 +11,6 @@ var concat = require('gulp-concat');
 var cssmin = require('gulp-cssmin');
 var gutil = require('gulp-util');
 var shell = require('gulp-shell');
-var connect = require('gulp-connect');
 var glob = require('glob');
 var livereload = require('gulp-livereload');
 var jasminePhantomJs = require('gulp-jasmine2-phantomjs');
@@ -51,7 +50,6 @@ var browserifyTask = function (options) {
       .pipe(notify(function () {
         console.log('APP bundle built in ' + (Date.now() - start) + 'ms');
       }));
-      livereload.listen({ host: '127.0.0.1', port: 8000} );
   };
 
   // Fire up Watchify when developing
@@ -138,7 +136,6 @@ var cssTask = function (options) {
           }));
       };
       run();
-      livereload.listen({ host: '127.0.0.1', port: 8000});
       gulp.watch(options.src, run);
     } else {
       gulp.src(options.src)
@@ -153,7 +150,7 @@ gulp.task('default', function () {
 
   browserifyTask({
     development: true,
-    src: './app/main.js', 
+    src: './app/main.js',
     dest: './build'
   });
   
