@@ -17,7 +17,7 @@
 		padding: 0px;
 		float:center;
 	}
-	#Content #Sequencer .Indicator{
+	#Content #Indicator .Indicator{
 		position: relative;
 		float: left;
 		width: 50px;
@@ -28,7 +28,7 @@
 		opacity: 0;
 /*		transition: opacity 0.1s;
 */	}
-	#Content #Sequencer .Indicator.Lit{
+	#Content #Indicator .Indicator.Lit{
 		opacity: .8;
 	}
 	.Slider {
@@ -42,5 +42,10 @@
 		margin-left: 20%;
 	}
 	#Content #StartButton .Checkbox{
+		width: 100%;
+	}
+	
+	.Momentary {
+		margin-top: 10px;
 		width: 100%;
 	}

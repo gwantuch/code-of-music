@@ -1,8 +1,6 @@
 /** @jsx React.DOM */
 var React = require('react');
-var App = require('./App.js');
-// React.render(<App/>, document.body);
-
+var Input = require('./input');
 var $ = require('jquery');
 var d3 = require('d3');
 var c3 = require('c3');
@@ -268,4 +266,5 @@ Tone.Transport.setInterval(function(time){
 
 }, "8n");
 
+React.render(<Input submit="Submit"/>, document.getElementById('add-stock'));
 

@@ -29,7 +29,7 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 		this.music.setMode(lydian, "lydian");
 	}
 
-	for (var i = 0; i < 1; i++) {
+	for (var i = 0; i < 4; i++) {
 		var octave = Math.round(Math.random()*4);
 
 		synths.push(new Synth("Trumpet", octave*referenceFreq));
@@ -63,23 +63,22 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 	}
 
 	function generate(step){
-		var closest = 1;
 		var rand = Math.random();
 		var noteIndex;
+		var lastProb = 1;
 
 		for(var i = 0; i < possibilities[step].length; i++){
-			var diff = Math.abs(probabilities[step][i] - rand);
-			if( diff < closest ){
+			if(rand < probabilities[step][i] && probabilities[step][i] < lastProb){
 				noteIndex = i;
-				closest = diff;
-			}   
+				lastProb = probabilities[step][i];
+			} 
 		}
+
+		if(noteIndex === undefined) noteIndex = Math.round(Math.random()*(possibilities[step].length - 1));
 
 		return possibilities[step][noteIndex];
 
 	}
-
-	var previousNote = 0;
 
 	Tone.Transport.setBpm(110);
 
@@ -88,7 +87,7 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 		for (var i = 0; i < synths.length; i++ ){
 			var currentNote = generate(synths[i].previousNote);
 
-			if (currentNote != 'rest') synths[i].synth.triggerAttackRelease(synths[i].music.scale[currentNote]);
+			if (currentNote != 'rest') synths[i].synth.triggerAttackRelease(synths[i].music.scale[currentNote], "16n");
 
 			synths[i].previousNote = currentNote;
 		}
@@ -104,6 +103,5 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 			Tone.Transport.stop();
 		}
 	}, "start", "stop");
-
 
 });

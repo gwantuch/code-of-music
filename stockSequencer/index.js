@@ -3,16 +3,15 @@ var _ = require('underscore');
 var Music = require('./music');
 var Chartist = require('chartist');
 
-var stepCount = 8;
-
 $(document).ready(function () {
 	var stocks = [];
 	var synths = [];
 	var prices = [];
+	var stepCount = 90;
 
 	$('#addStock').on('click', function(event) {
 		var mStock = new Stock($('#Stock1').val());
-		mStock.init(stocks, synths, prices);
+		mStock.init(stocks, synths, prices, stepCount, initTone);
 
 		$('#Stock1').val('');
 	});
@@ -67,19 +66,19 @@ var Stock = function(tickerSymbol) {
 	this.loading = true;
 }
 
-Stock.prototype.init = function(stocks, synths, prices) {
+Stock.prototype.init = function(stocks, synths, prices, stepCount, callback) {
 	var self = this;
 
 	function listPoints (points) {
 		// i'm the callback
-		for(i = 0; i < 8; i++){
+		for(i = 0; i < stepCount; i++){
 			console.log(points[i].getAttribute('ct:value'));
 		}
 	}
 
 	var parameters = {
 		"Normalized": true,
-		"NumberOfDays": 30,
+		"NumberOfDays": 365,
 		"DataPeriod": "Day",
 		"Elements": [{
 			"Symbol": this.ticker,
@@ -88,7 +87,7 @@ Stock.prototype.init = function(stocks, synths, prices) {
 		}]
 	};
 
-	parametersURI = encodeURIComponent(JSON.stringify(parameters)).replace(/'/g,"%27").replace(/"/g,"%22")
+	parametersURI = encodeURIComponent(JSON.stringify(parameters)).replace(/'/g,"%27").replace(/"/g,"%22");
 
 	var URL = "http://dev.markitondemand.com/Api/v2/InteractiveChart/jsonp?parameters=" + parametersURI;
 
@@ -99,7 +98,6 @@ Stock.prototype.init = function(stocks, synths, prices) {
 	})
 	.done(function(data,pointsList) {
 		// console.log("success");
-
 		var dates = data.Dates;
 		dates = dates.slice(Math.max(dates.length - stepCount));
 
@@ -118,7 +116,7 @@ Stock.prototype.init = function(stocks, synths, prices) {
 		$('#stocklist').append('<li class="list-group-item">'+self.ticker+'</li>');
 
 		if(stocks.length === 1){
-			initTone(stocks, synths);					
+			callback(stocks, synths);					
 		}
 
 		// listPoints(points);
@@ -132,6 +130,8 @@ Stock.prototype.init = function(stocks, synths, prices) {
 };
 
 Stock.prototype.init_Steps = function(prices, numSteps) {
+	// console.log(prices);
+	// console.log(numSteps);
 	var referenceFreq = 49;
 
 	this.prices = prices;
@@ -150,13 +150,15 @@ Stock.prototype.init_Steps = function(prices, numSteps) {
 	for(var note = 0; note < this.notes.length; note++){
 		this.steps[note] = this.music.snapToNote( ( this.notes[note] ), min, max*1.25 );
 	}
+
+	console.log(this.steps);
 }
 
 Stock.prototype.init_Synth = function() {
 	// var presets = [ "Trumpet", "Koto"]
 
 	this.synth = new Tone.MonoSynth();
-	this.synth.setPreset("Pianoetta");
+	this.synth.setPreset("Koto");
 	this.synth.oscillator.setType('sine');
 	this.synth.setVolume(-20);
 	this.synth.toMaster();

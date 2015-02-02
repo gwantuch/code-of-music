@@ -13,11 +13,6 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 	var stepNum = 0;
 	var referenceFreq = 49;
 
-	var music = new Music(referenceFreq);
-	for(var note = 0; note < 8; note++){
-		steps[note] = music.snapToNote( ( Math.random() * 100 ), 0, 400 );
-	}
-
 	var synth = new Tone.FMSynth();
 	synth.setPreset("Trumpet");
 	synth.setVolume(-10);
@@ -28,7 +23,6 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 	}
 
 	// Tone.Transport.setLoopEnd = '1m';
-	Tone.Transport.loop = true;
 	//this will start the player on every eigth note
 	Tone.Transport.setInterval(function(time){
 		$(".Lit").removeClass("Lit");
@@ -57,26 +51,40 @@ require(["Tone/core/Tone", "Tone/instrument/FMSynth", "Tone/core/Transport", "To
 
 	var sequencer = $("#Sequencer");
 
+	var container = $("#Content")
+	// var refreshBox = new GUI.Momentary(container, function(down){
+	// 	if (down){
+	// 		setTransport();
+	// 		makeCheckboxes();
+	// 	} else {
+			
+	// 	}
+	// }, "refresh steps", "hover");
+
+	var indicator = $('#Indicator')
+
 	function makeIndicator(){
 		for (var beat = 0; beat < 8; beat++){
-			var indicator = $("<div>", {"class" : "Indicator"}).appendTo(sequencer);
-			indicators.push(indicator);
+			var indicatorButton = $("<div>", {"class" : "Indicator"}).appendTo(indicator);
+			indicators.push(indicatorButton);
 		}
-		sequencer.append("<br><br>");
-	}	
+		indicator.append("<br><br>");
+	}
 
 	function makeCheckboxes(){
 		// for (var row = 0; row < 4; row++){
 		// 	checkboxes[row] = [];
-			for (var beat = 0; beat < 8; beat++){
-				var checkbox = new GUI.Checkbox(sequencer, function(){}, Math.round(steps[beat]) + "hz", Math.round(steps[beat]) + "hz");
-				checkboxes.push(checkbox);
-				//randomly set some as checked initially
-				if (Math.random() < 0.25){
-					checkbox.check(true);
-				}
+		sequencer.empty();
+
+		for (var beat = 0; beat < 8; beat++){
+			checkbox = new GUI.Checkbox(sequencer, function(){}, Math.round(steps[beat]) + "hz", Math.round(steps[beat]) + "hz");
+			checkboxes.push(checkbox);
+			//randomly set some as checked initially
+			if (Math.random() < 0.25){
+				checkbox.check(true);
 			}
-			sequencer.append("<br>");
+		}
+		sequencer.append("<br>");
 		// }
 	}
 
